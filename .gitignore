@@ -1,3 +1,13 @@
 dz**/
 *.lnk
 p_02_report
+*.qpf
+*.qsf
+*.qws
+*.sdc
+*.bak
+*.rpt
+*.bsf
+*.cmp
+*.html
+*.elf
