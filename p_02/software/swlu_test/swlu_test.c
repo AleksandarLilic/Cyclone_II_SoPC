@@ -24,7 +24,7 @@
 ***********************************************************************/
 void sw_get_command_v0(alt_u32 sw_base, int *sw_cmd)
 {
-  *sw_cmd = IORD(sw_base, 0) & 0x00003fff;  // read switch value
+  *sw_cmd = IORD(sw_base, 0) & 0x0003ffff;  // read switch value
 }
 
 /***********************************************************************
@@ -85,7 +85,7 @@ alt_u8 sw_lu(alt_u8 a, alt_u8 b, alt_u8 op)
 	  val = (a >> b) | (a << (8 - b));
 	  break;
   case 10: // SRA
-	  val = (a & 128) | (a >> b);
+	  val = (a & 128) | ((a & 127) >> b);
 	  break;
   case 11: // SETB
 	  val = a | (1 << b);
@@ -127,7 +127,7 @@ int main(){
     b  = (sw_cmd & MASK_B ) >> POS_B;
     op = (sw_cmd & MASK_OP) >> POS_OP;
 
-    c = sw_lu(a, b, c);
+    c = sw_lu(a, b, op);
 
     led_result_v0(LED_BASE, c);
   }
