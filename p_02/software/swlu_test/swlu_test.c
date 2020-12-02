@@ -104,6 +104,7 @@ alt_u8 sw_lu(alt_u8 a, alt_u8 b, alt_u8 op)
 	  break;
   default:
 	  val = 0;
+	  break;
   }
   return val;
 }
