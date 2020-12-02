@@ -44,8 +44,8 @@ begin
 		pi_switch 	=> reg_pi_switch,
 		pi_btn   	=> reg_pi_btn,
 		po_led_1 	=> reg_po_led_1,
-        po_led_2    => reg_po_led_2
-        );
+      po_led_2    => reg_po_led_2
+      );
 
 	clk_process :process
 	begin
@@ -59,19 +59,19 @@ begin
 	begin  
 		wait for 5 ns;
 		wait for clk_period*10;
-		rst <= '1';
-		wait for clk_period*5;
 		rst <= '0';
-		reg_pi_btn <= '0';
+		wait for clk_period*5;
+		rst <= '1';
+		reg_pi_btn <= '1';
 		reg_pi_switch <= "0000000001";
 		
 		wait for clk_period;
 		wait for 30 ms;
-		reg_pi_btn <= '1';
+		reg_pi_btn <= '0';
 		wait for clk_period;
 		
 		wait for 20 ms;
-		reg_pi_btn <= '0';
+		reg_pi_btn <= '1';
 		wait for 20 ms;
 		
 		reg_pi_switch <= "0000001001";
