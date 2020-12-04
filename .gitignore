@@ -1,6 +1,12 @@
 dz**/
+db/
+incremental_db/
+output_files/
+.qsys_edit/
+simulation/
 *.lnk
 p_02_report
+*.qsys
 *.qpf
 *.qsf
 *.qws
