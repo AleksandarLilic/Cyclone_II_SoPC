@@ -1,4 +1,6 @@
 dz**/
+custom_ip/
+**_bsp/
 db/
 incremental_db/
 output_files/
