@@ -3,6 +3,7 @@ custom_ip/
 **_bsp/
 db/
 incremental_db/
+synthesis/
 output_files/
 .qsys_edit/
 simulation/
