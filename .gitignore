@@ -7,6 +7,11 @@ synthesis/
 output_files/
 .qsys_edit/
 simulation/
+obj/
+.cproject
+.project
+create-this-app
+Makefile
 *.lnk
 p_02_report
 *.qsys
@@ -18,6 +23,9 @@ p_02_report
 *.rpt
 *.bsf
 *.cmp
+*.map
+*.objdump
 *.html
 *.elf
 *.7z
+readme.txt
