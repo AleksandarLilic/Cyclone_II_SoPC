@@ -51,11 +51,7 @@ typedef struct{
     alt_u8 chg_m;
     alt_u8 chg_s;
     // counter enable and status jtag
-    alt_u8 jtag_en;
-    alt_u8 jtag_time_matched;
-    // counter enable and status jtag
-    alt_u8 ledr_en;
-    alt_u8 ledr_time_matched;
+    alt_u8 uart_send_data;
 } status_struct; // SPLIT INTO TWO OR THREE?
 
 
@@ -154,7 +150,7 @@ void check_btn(alt_u8 btn, status_struct *status)
 * argument:
 *   btn_base: base address of pushbutton PIO
 *   sw_base: base address of switch PIO
-*   status: pointer to status struct
+*   *status: pointer to status struct
 * return:
 *   updated status
 * note:
@@ -196,24 +192,63 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
 * purpose:  display the interval when it is changed
 * argument:
 *   jtag_base: base address of JTAG UART
-*   cmd: command
+*   *status: pointer to status struct
 * return:
 * note:
 ***********************************************************************/
-// void jtaguart_disp_msg_v1(alt_u32 jtag_base, cmd_type cmd)
-// {
-  // static int current=0;                // current interval
-  // char msg[] ="Interval: 0000 ms\n";
-
-  // if (cmd.per!=current){               // new interval detected
-    // msg[13] = cmd.per%10 + '0';        // ascii code for 0 digit
-    // msg[12] = (cmd.per/10)%10 + '0';   // ascii code for 10 digit
-    // msg[11] = (cmd.per/100)%10 + '0';  // ascii code for 100 digit
-    // msg[10] = cmd.per/1000 + '0';      // ascii code for 1000 digit
-    // jtaguart_wr_str(jtag_base, msg);   // send string to console
-    // current = cmd.per;                 // update current interval
-  // }
-// }
+void jtaguart_disp_msg_v1(alt_u32 jtag_base, status_struct *status)
+{
+    alt_u8 local_h, local_m, local_s;
+    static alt_u8 we = 0;
+    char msg[] = "T HH:MM:SS    \n";
+    if(status -> sw_mode_time_set == mode_time){
+        if(status -> uart_send_data){
+            we = 1;
+            local_h = status -> time_h;
+            local_m = status -> time_m;
+            local_s = status -> time_s;
+            msg[11] = status -> sw_alarm_enable ? '1' : '0';
+            msg[13] = status -> alarm_active ? '1' : '0';
+            status -> uart_send_data = 0;
+        }
+    }
+    else{ //status -> sw_mode_time_set == mode_settings
+        if (status -> chg_h || status -> chg_m || status -> chg_s){ 
+        we = 1;
+        //button has been pushed:
+            //char msg[] = "T HH:MM:SS t\n";
+            if(status -> sw_set_time_alarm == mode_time){
+                msg[0] = 'V';
+                local_h = status -> time_h;
+                local_m = status -> time_m;
+                local_s = status -> time_s;
+            }
+            else{ //status -> sw_set_time_alarm == mode_alarm)
+                msg[0] = 'A';
+                local_h = status -> alarm_h;
+                local_m = status -> alarm_m;
+                local_s = status -> alarm_s;
+            }
+            msg[11] = status -> chg_h ? 'H' : 
+                      status -> chg_m ? 'M' :
+                      status -> chg_s ? 'S' : '0';
+            status -> chg_h = 0; 
+            status -> chg_m = 0;
+            status -> chg_s = 0;
+        }
+    }
+    // write time:
+    if(we){
+        msg[3] =  local_h % 10 + '0';        // ascii code for 0 digit
+        msg[2] = (local_h / 10) % 10 + '0';  // ascii code for 10 digit
+        msg[6] =  local_m % 10 + '0';        // ascii code for 0 digit
+        msg[5] = (local_m / 10) % 10 + '0';  // ascii code for 10 digit
+        msg[9] =  local_s % 10 + '0';        // ascii code for 0 digit
+        msg[8] = (local_s / 10) % 10 + '0';  // ascii code for 10 digit
+        jtaguart_wr_str(jtag_base, msg);
+        we = 0;
+    }
+}
 
 /***********************************************************************
 * function: ssd_disp_msg_v1()
@@ -284,8 +319,8 @@ void timer_inc(status_struct *status, alt_u32 timer_base)
     static alt_u16 alarm_ms = 0;
     
     if (timer_read_tick(timer_base) == 1){
-            timer_clear_tick(timer_base);
-            timer_fired = 1;
+        timer_clear_tick(timer_base);
+        timer_fired = 1;
     }
     // stop counter if current time has to be set
     if(!((status -> sw_mode_time_set == mode_settings) & (status -> sw_set_time_alarm == set_time))){
@@ -295,6 +330,7 @@ void timer_inc(status_struct *status, alt_u32 timer_base)
             status -> time_s ++;
             // status -> chg_s = 1;
             time_ms = 0;
+            status -> uart_send_data = 1;
         } // end if
         if(status -> time_s == 60){
             status -> time_m ++;
@@ -354,11 +390,10 @@ int main(){
         sw_get_command_v1(BTN_BASE, SW_BASE, &status);
         timer_inc(&status, USR_TIMER_BASE); 
         ssd_disp_msg_v1(&status);
-        if(status.sw_alarm_enable){
-            alarm_check(&status);
-        }
-            pio_write(LEDR_BASE, status.alarm_active);
-       // }
+        jtaguart_disp_msg_v1(JTAG_UART_BASE, &status);
+        if(status.sw_alarm_enable)
+            alarm_check(&status);        
+        pio_write(LEDR_BASE, status.alarm_active);
         
     }    
 }// main
