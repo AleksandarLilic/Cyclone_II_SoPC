@@ -41,11 +41,11 @@ void led_result_v0(alt_u32 led_base, int val)
 }
 
 /***********************************************************************
-* function: led_flash_v0()
-* purpose:  set LEDs to a given value
+* function: sw_lu()
+* purpose:  bit operations
 * argument:
-*   led_base: base address of discrete LED PIO
-*   sw_cmd: value to be set
+*   a, b : operands
+*   op: op code of a function
 * return:
 ***********************************************************************/
 
