@@ -2,7 +2,7 @@
 
 **Description:**
 
-VHDL hardware accelerator design with microcontroler applications written in C  
+VHDL hardware accelerator design with microcontroller applications written in C  
 
 Homework assignmets as a part of Embedded systems design course  
 
