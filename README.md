@@ -2,7 +2,7 @@
 
 **Description:**
 
-VHDL hardware accelerators design with microcontroller applications written in C  
+VHDL hardware accelerators design on Cyclone II FPGA with microcontroller applications written in C for Nios II core  
 
 Homework assignmets as a part of Embedded systems design course  
 
