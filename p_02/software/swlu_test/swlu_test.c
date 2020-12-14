@@ -47,6 +47,7 @@ void led_result_v0(alt_u32 led_base, int val)
 *   a, b : operands
 *   op: op code of a function
 * return:
+*   val : result of a operation
 ***********************************************************************/
 
 alt_u8 sw_lu(alt_u8 a, alt_u8 b, alt_u8 op)
