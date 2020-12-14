@@ -4,7 +4,7 @@
 
 VHDL hardware accelerators design on Cyclone II FPGA with microcontroller applications written in C for Nios II core  
 
-Homework assignmets as a part of Embedded systems design course  
+Homework assignments as a part of Embedded systems design course  
 
 Projects cover a range of applications for System on Programable Chip. Development board used for the project is Altera DE2 with Cyclone II FPGA and Nios II soft core. Every project is a two part: hardware description of CPU core with peripherals and accelerators, and C application. Each project has *.sopcinfo* file avalibale and pin assignments *.csv* that are used in a particular project.
 
