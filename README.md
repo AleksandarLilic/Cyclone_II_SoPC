@@ -21,6 +21,8 @@ n/a
 Improved Alarm clock SW application with the use of HAL. Peripherals used: GPIO for Seven-segment display, Timer and JTAG UART. 
 
 **Status:**   
+Ongoing  
+Branch: p_04_dev  
 
 
 ## **Project 3: Alarm clock**
