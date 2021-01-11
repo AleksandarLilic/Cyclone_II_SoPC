@@ -64,7 +64,6 @@ typedef struct{
 * purpose:  system initialization
 * argument:
 *   btn_base: base address of pushbutton PIO
-*   timer_base: base address of user timer
 *   ledr_base: base address of ledr pio
 *   status: pointer to status struct
 * return:
@@ -161,7 +160,6 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
 {
     alt_u8 btn;
     alt_u8 sw;
-    //status_struct *ptr_status = status;
   
     sw = (alt_u8) pio_read(sw_base) & 0x7;    // read 3 switches
     if (sw & 0x01)
@@ -188,51 +186,52 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
     }
 }
 
-/***********************************************************************
+/**********************************************************************
 * function: jtag_uart_disp_msg_v2()
 * purpose:  display the interval when it is changed
 * argument:
-*   jtag_base: base address of JTAG UART
 *   *status: pointer to status struct
 * return:
 * note:
 ***********************************************************************/
-/* void jtaguart_disp_msg_v2(alt_u32 jtag_base, status_struct *status)
+void jtaguart_disp_msg_v2(status_struct *status)
 {
     alt_u8 local_h, local_m, local_s;
     static alt_u8 we = 0;
-    char msg[] = "T HH:MM:SS    \n";
+    static char local_mode, local_st1, local_st2;
+    
     if(status -> sw_mode_time_set == mode_time){
         if(status -> uart_send_data){
             we = 1;
             local_h = status -> time_h;
             local_m = status -> time_m;
             local_s = status -> time_s;
-            msg[11] = status -> sw_alarm_enable ? '1' : '0';
-            msg[13] = status -> alarm_active ? '1' : '0';
+            local_mode = 'T';
+            local_st1 = status -> sw_alarm_enable ? '1' : '0';
+            local_st2 = status -> alarm_active ? '1' : '0';
             status -> uart_send_data = 0;
         }
     }
     else{ //status -> sw_mode_time_set == mode_settings
         if (status -> chg_h || status -> chg_m || status -> chg_s){ 
         we = 1;
-        //button has been pushed:
-            //char msg[] = "T HH:MM:SS t\n";
+        // button has been pushed:
             if(status -> sw_set_time_alarm == mode_time){
-                msg[0] = 'V';
+                local_mode = 'V';
                 local_h = status -> time_h;
                 local_m = status -> time_m;
                 local_s = status -> time_s;
             }
             else{ //status -> sw_set_time_alarm == mode_alarm)
-                msg[0] = 'A';
+                local_mode = 'A';
                 local_h = status -> alarm_h;
                 local_m = status -> alarm_m;
                 local_s = status -> alarm_s;
             }
-            msg[11] = status -> chg_h ? 'H' : 
-                      status -> chg_m ? 'M' :
-                      status -> chg_s ? 'S' : '0';
+            local_st1 = status -> chg_h ? 'H' : 
+                        status -> chg_m ? 'M' :
+                        status -> chg_s ? 'S' : '0';
+            local_st2 = ' ';
             status -> chg_h = 0; 
             status -> chg_m = 0;
             status -> chg_s = 0;
@@ -240,16 +239,10 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
     }
     // write time:
     if(we){
-        msg[3] =  local_h % 10 + '0';        // ascii code for 0 digit
-        msg[2] = (local_h / 10) % 10 + '0';  // ascii code for 10 digit
-        msg[6] =  local_m % 10 + '0';        // ascii code for 0 digit
-        msg[5] = (local_m / 10) % 10 + '0';  // ascii code for 10 digit
-        msg[9] =  local_s % 10 + '0';        // ascii code for 0 digit
-        msg[8] = (local_s / 10) % 10 + '0';  // ascii code for 10 digit
-        jtaguart_wr_str(jtag_base, msg);
+        printf("Interval: %c %02d:%02d:%02d %c %c\n", local_mode, local_h, local_m, local_s, local_st1, local_st2);
         we = 0;
     }
-} */
+}
 
 /***********************************************************************
 * function: ssd_disp_msg_v1()
@@ -261,7 +254,6 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
 ***********************************************************************/
 void ssd_disp_msg_v1(status_struct *status)
 {
-    //int pd;
     alt_u8 hex, h_char[2], m_char[2], s_char[2];
     alt_u8 local_h, local_m, local_s;
 
@@ -276,29 +268,20 @@ void ssd_disp_msg_v1(status_struct *status)
         local_h = status -> time_h;        
     }
   
-    //if (status -> chg_h == 1){
-    //    status -> chg_h = 0;
-        hex =  local_h % 10;          // 0 digit
-        h_char[1] = ssd_conv_hex(hex);
-        hex = (local_h / 10) % 10;    // 10 digit
-        h_char[0] = ssd_conv_hex(hex);
-    //}
-    
-    //if (status -> chg_m == 1){
-    //    status -> chg_m = 0;
-        hex =  local_m % 10;          // 0 digit
-        m_char[1] = ssd_conv_hex(hex);
-        hex = (local_m / 10) % 10;    // 10 digit
-        m_char[0] = ssd_conv_hex(hex);        
-   // }
-    
-    //if (status -> chg_s == 1){
-    //    status -> chg_s = 0;
-        hex =  local_s % 10;          // 0 digit
-        s_char[1] = ssd_conv_hex(hex);
-        hex = (local_s / 10) % 10;    // 10 digit
-        s_char[0] = ssd_conv_hex(hex);        
-    //}
+    hex =  local_h % 10;          // 0 digit
+    h_char[1] = ssd_conv_hex(hex);
+    hex = (local_h / 10) % 10;    // 10 digit
+    h_char[0] = ssd_conv_hex(hex);
+
+    hex =  local_m % 10;          // 0 digit
+    m_char[1] = ssd_conv_hex(hex);
+    hex = (local_m / 10) % 10;    // 10 digit
+    m_char[0] = ssd_conv_hex(hex);
+
+    hex =  local_s % 10;          // 0 digit
+    s_char[1] = ssd_conv_hex(hex);
+    hex = (local_s / 10) % 10;    // 10 digit
+    s_char[0] = ssd_conv_hex(hex);
   
     ssd_disp_ptn(SSD_H_BASE, h_char); // display h digit
     ssd_disp_ptn(SSD_M_BASE, m_char); // display m digit
@@ -390,9 +373,9 @@ int main(){
         sw_get_command_v1(BTN_BASE, SW_BASE, &status);
         timer_inc(&status); 
         ssd_disp_msg_v1(&status);
-        // jtaguart_disp_msg_v2(JTAG_UART_BASE, &status);
         if(status.sw_alarm_enable)
             alarm_check(&status);        
+        jtaguart_disp_msg_v2(&status);
         pio_write(LEDR_BASE, status.alarm_active);        
     }    
 }// main
