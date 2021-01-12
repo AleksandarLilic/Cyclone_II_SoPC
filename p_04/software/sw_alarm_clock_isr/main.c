@@ -62,6 +62,9 @@ typedef struct{
 
 alt_u32 isr_timer_base;   // base address of the timer module
 alt_u32 sys_ms_tick;      // elapsed ms ticks
+alt_u32 isr_btn_base;   // base address of the PIO module
+alt_u32 btn_pressed;      // button pressed
+alt_u32 btn_status;
 
 static void ms_clock_isr(void* context, alt_u32 id)
 {
@@ -69,6 +72,19 @@ static void ms_clock_isr(void* context, alt_u32 id)
     timer_clear_tick(isr_timer_base);
     /* increment ms tick */
     sys_ms_tick++;
+}
+
+static void btn_isr(void* context, alt_u32 id)
+{
+	printf("btn isr started ");
+    /* read 3 pushbuttons */
+    btn_status = (alt_u8) btn_read(isr_btn_base) & 0x7;
+    printf("btn status: %d, btn_status ");
+	/* clear current interrupt condition */
+	btn_clear(isr_btn_base);
+    /* increment ms tick */
+    btn_pressed = 1;
+    printf("btn isr finished \n");
 }
 
 /***********************************************************************
@@ -85,6 +101,7 @@ static void ms_clock_isr(void* context, alt_u32 id)
 void flashsys_init_v1(alt_u32 btn_base, alt_u32 timer_base, alt_u32 ledr_base, status_struct *status)
 {
     btn_clear(btn_base);              // clear button edge-capture reg
+    IOWR(btn_base, PIO_INTM_REG_OFT, 0x0007);
     timer_wr_per(timer_base, 50000);  // set 1-ms timeout period
     pio_write(ledr_base, 0);
     status -> sw_mode_time_set = mode_time;
@@ -172,7 +189,7 @@ void check_btn(alt_u8 btn, status_struct *status)
 ***********************************************************************/
 void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
 {
-    alt_u8 btn;
+    //alt_u8 btn;
     alt_u8 sw;
   
     sw = (alt_u8) pio_read(sw_base) & 0x7;    // read 3 switches
@@ -191,12 +208,13 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
     else
         status -> sw_mode_time_set = mode_time;
         
-    if (status -> sw_mode_time_set == mode_settings){
-        btn = (alt_u8) btn_read(btn_base) & 0x7;    // read 3 pushbuttons
-        btn_clear(btn_base);
-        if (btn!=0){                                 // a button pressed
-            check_btn(btn, status);
-        }
+    if (btn_pressed == 1){ // interrupt occurred
+    	printf("should not run ");
+    	btn_pressed = 0; // clear global flag
+    	if (status -> sw_mode_time_set == mode_settings){ // if in mode that should register btn press
+    		check_btn(btn_status, status);
+            btn_status = 0;
+    	}
     }
 }
 
@@ -316,9 +334,6 @@ void timer_inc(status_struct *status)
     static alt_u16 alarm_s = 0;    
     
     static int last=0;
-    //int now ;
-    
-    //now = (int)(alt_nticks()* alt_ticks_per_second () / 1000);
     
     if ((sys_ms_tick - last) < 1000) // interval not reached (1000ms period)
         return;
@@ -385,10 +400,18 @@ int main(){
     /* assign initial values to global variables */
     isr_timer_base = USR_TIMER_BASE;
     sys_ms_tick = 0;
+    isr_btn_base = BTN_BASE;
+    btn_pressed = 0;
     /* register ISR */
     alt_irq_register(USR_TIMER_IRQ, NULL, ms_clock_isr);
+    alt_irq_register(BTN_IRQ, NULL, btn_isr);
     /* main loop */
     
+    //enable pio interrupts
+   // pio_write(BTN_BASE + PIO_INTM_REG_OFT, 0x7);
+    int reg_read = pio_read(BTN_BASE + PIO_INTM_REG_OFT);
+    printf("reg read: %d", reg_read);
+
     //main loop    
     while(1){
         sw_get_command_v1(BTN_BASE, SW_BASE, &status);
