@@ -1,3 +1,4 @@
 theme: jekyll-theme-slate
+show_downloads: true
 plugins: 
          - jekyll-sitemap
