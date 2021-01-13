@@ -14,14 +14,18 @@ Ongoing, projects are uploaded as they are being developed
 **Further development:**  
 n/a  
 
-## **Project 4: Alarm clock with HAL**
+## **Project 4: Alarm clock with HAL & IRQ**
 
 **Description:**  
 
-Improved Alarm clock SW application with the use of HAL. Peripherals used: GPIO for Seven-segment display, Timer and JTAG UART. 
+Improved Alarm clock SW application with the use of HAL for timer and UART peripherals and IRQ for timer and push buttons PIO. Two things are achieved with this approach compared to Project 3 version:  
+ - Improved portability due to HAL and 
+ - Added determinism thru interrupts.  
+ 
+Peripherals used: GPIO for Seven-segment display, push buttons, swithces and LED, Timer and JTAG UART.  
 
 **Status:**   
-Ongoing  
+Finished  
 Branch: p_04_dev  
 
 
@@ -29,7 +33,7 @@ Branch: p_04_dev
 
 **Description:**  
 
-Alarm clock SW application. Peripherals used: GPIO for Seven-segment display, Timer and JTAG UART. 
+Alarm clock SW application. Peripherals used: GPIO for Seven-segment display, push buttons, swithces and LED, Timer and JTAG UART. 
 
 **Status:**   
 Finished
