@@ -14,7 +14,32 @@ Ongoing, projects are uploaded as they are being developed
 **Further development:**  
 TBD  
 
-## **Project 4: Alarm clock with HAL & IRQ**
+## **Project 6: Hardware accelerator for square root calculation**  
+
+**Description:**  
+
+Hardware accelerator for calculation of y = [sqrt(x)] (nearest whole number that is a square root of x), with x being 32-bit wide and y 16-bit wide (y is padded to 32-bits in order to fit in one Nios II register during system integration). Pseudocode for implemented sqrt function:  
+
+    mask = 1 << 30; root = 0;
+    rem = n;
+    while(mask){
+        if((root + mask) <= rem){
+            rem = rem - (root + mask);
+            root = root + (2*mask);
+        }
+        root = root >> 1;
+        mask = mask >> 2;
+    }  
+      
+Integration: TBD  
+
+Peripherals used: TBD  
+
+**Status:**   
+Development  
+Branch: p_06_dev  
+
+## **Project 4 & 5: Alarm clock with HAL & IRQ**  
 
 **Description:**  
 
@@ -28,18 +53,16 @@ Peripherals used: GPIO for Seven-segment display, push buttons, swithces and LED
 Finished  
 Branch: p_04_dev  
 
-
-## **Project 3: Alarm clock**
+## **Project 3: Alarm clock**  
 
 **Description:**  
 
 Alarm clock SW application. Peripherals used: GPIO for Seven-segment display, push buttons, swithces and LED, Timer and JTAG UART. 
 
 **Status:**   
-Finished
+Finished  
 
-
-## **Project 2: Software Logic Unit**
+## **Project 2: Software Logic Unit**  
 
 **Description:**  
 
