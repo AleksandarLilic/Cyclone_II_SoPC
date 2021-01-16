@@ -12,7 +12,7 @@ Projects cover a range of applications for System on Programable Chip. Developme
 Ongoing, projects are uploaded as they are being developed  
 
 **Further development:**  
-n/a  
+TBD  
 
 ## **Project 4: Alarm clock with HAL & IRQ**
 

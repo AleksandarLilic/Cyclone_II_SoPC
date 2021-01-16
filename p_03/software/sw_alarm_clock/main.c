@@ -1,7 +1,7 @@
 /***********************************************************************
 *
-* Module:  Advanced flashing-LED system using ad hoc driver
-* File:    chu_main_led2_adhoc.c
+* Module:  Simple alarm clock system using ad hoc driver
+* File:    main.c
 * Purpose: Task routines and main program
 *
 ***********************************************************************/
@@ -52,9 +52,7 @@ typedef struct{
     alt_u8 chg_s;
     // counter enable and status jtag
     alt_u8 uart_send_data;
-} status_struct; // SPLIT INTO TWO OR THREE?
-
-
+} status_struct; 
 
 /***********************************************************************
 * function: flashsys_init_v1()
@@ -85,6 +83,7 @@ void flashsys_init_v1(alt_u32 btn_base, alt_u32 timer_base, alt_u32 ledr_base, s
     status -> chg_m = 0;  
     status -> chg_s = 0;  
 }
+
 /***********************************************************************
 * function: check_btn()
 * purpose:  check value of buttons and update struct
@@ -185,7 +184,6 @@ void sw_get_command_v1(alt_u32 btn_base, alt_u32 sw_base, status_struct *status)
         }
     }
 }
-
 
 /***********************************************************************
 * function: jtag_uart_disp_msg_v1()
@@ -397,4 +395,3 @@ int main(){
         
     }    
 }// main
-
