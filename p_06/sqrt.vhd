@@ -43,8 +43,10 @@ signal reg_root_nx  : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_rem      : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_rem_nx   : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 
-begin
+signal debug        : INTEGER := 0;
 
+begin
+    
     fsm_process: process(clk)
 	 begin
         if(rising_edge(clk)) then
@@ -62,7 +64,7 @@ begin
         end if;
 	 end process;
     
-    fsm_state_process: process(state, pi_start, pi_data, reg_rem, reg_mask, reg_root, reg_mask_nx, w_sum)
+    fsm_state_process: process(state, pi_start, pi_data, reg_rem, reg_mask, reg_root)
     begin
         -- Default Values:
         state_nx    <= state;
@@ -71,41 +73,50 @@ begin
         reg_mask_nx <= reg_mask;
         reg_root_nx <= reg_root;
         reg_rem_nx  <= reg_rem;
-		  
-		  
+        debug <= 99;
+        
         case(state) is
             when IDLE =>
+                debug <= 0;
                 reg_ready <= '1';
                 if(pi_start = '1') then
                     state_nx <= CALC;
-                    reg_mask_nx <= STD_LOGIC_VECTOR(shift_left(c_ONE,2));
+                    reg_mask_nx <= STD_LOGIC_VECTOR(shift_left(c_ONE,30));
                     reg_root_nx <= (others => '0');
                     reg_rem_nx  <= pi_data;
+                    debug <= 1;
                 end if;
                 
             when CALC =>
+                debug <= 10;
                 if(reg_mask > X"00000000") then
                     state_nx <= CALC;
+                    debug <= 11;
                     if(w_sum <= UNSIGNED(reg_rem)) then
                         reg_rem_nx  <= STD_LOGIC_VECTOR(UNSIGNED(reg_rem) - w_sum);
-                        reg_root_nx <= STD_LOGIC_VECTOR(shift_right((UNSIGNED(reg_root) + shift_right(UNSIGNED(reg_mask),2)),2));
+                        reg_root_nx <= STD_LOGIC_VECTOR(shift_right((UNSIGNED(reg_root) + shift_left(UNSIGNED(reg_mask),1)),1));
+                        debug <= 12;
                     else
                         reg_root_nx <= STD_LOGIC_VECTOR(shift_right(UNSIGNED(reg_root),1));
+                        debug <= 13;
                     end if;
-                    reg_mask_nx <= STD_LOGIC_VECTOR(shift_right(UNSIGNED(reg_mask_nx),2));
-                else
+                    reg_mask_nx <= STD_LOGIC_VECTOR(shift_right(UNSIGNED(reg_mask),2));
+                else -- reg_mask = 0x00
                     state_nx <= DONE;
+                    debug <= 14;
                 end if;
                 
             when DONE =>
                 state_nx <= IDLE;
                 reg_done <= '1';
+                debug <= 20;
             
             when others => NULL;
+            debug <= 9999;
         end case;
     end process;
     
-    w_sum <= UNSIGNED(reg_root) + UNSIGNED(reg_mask);
+    w_sum <= UNSIGNED(reg_root_nx) + UNSIGNED(reg_mask_nx);
     
     po_rdy  <= reg_ready;
     po_done <= reg_done;
