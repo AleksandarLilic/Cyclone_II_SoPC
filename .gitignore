@@ -28,5 +28,6 @@ p_02_report
 *.objdump
 *.html
 *.elf
+*.force_relink
 *.7z
 readme.txt

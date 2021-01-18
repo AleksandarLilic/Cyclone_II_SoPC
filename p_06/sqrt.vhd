@@ -11,7 +11,8 @@ entity sqrt is
         -- control & status
         pi_start    : IN  STD_LOGIC;
         po_rdy      : OUT STD_LOGIC;
-        po_done     : OUT STD_LOGIC;        
+        po_done     : OUT STD_LOGIC;
+        --po_debug    : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		
         -- datapath
         pi_data     : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -79,14 +80,14 @@ begin
         
         case(state) is
             when IDLE =>
-                debug <= 0;
+                debug <= 1;
                 reg_ready <= '1';
                 if(pi_start = '1') then
                     state_nx <= CALC;
                     reg_mask_nx <= STD_LOGIC_VECTOR(shift_left(c_ONE,30));
                     reg_root_nx <= (others => '0');
                     reg_rem_nx  <= pi_data;
-                    debug <= 1;
+                    debug <= 2;
                 end if;
                 
             when CALC =>
@@ -122,6 +123,7 @@ begin
     
     po_rdy  <= reg_ready;
     po_done <= reg_done;
-    po_data <= reg_root;
-
+    --po_data <= STD_LOGIC_VECTOR(to_unsigned(debug, po_data'length)); --reg_root;
+    po_data <= pi_data;
+    
 end behavioral;
