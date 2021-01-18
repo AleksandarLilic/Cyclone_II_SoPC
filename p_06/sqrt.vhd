@@ -42,6 +42,7 @@ signal reg_root     : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_root_nx  : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_rem      : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_rem_nx   : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
+signal reg_sum      :         UNSIGNED(31 DOWNTO 0) := (others => '0');
 
 signal debug        : INTEGER := 0;
 
@@ -60,11 +61,12 @@ begin
                 reg_mask <= reg_mask_nx;
                 reg_root <= reg_root_nx;
                 reg_rem  <= reg_rem_nx;
+                reg_sum  <= w_sum;
             end if;
         end if;
 	 end process;
     
-    fsm_state_process: process(state, pi_start, pi_data, reg_rem, reg_mask, reg_root)
+    fsm_state_process: process(state, pi_start, pi_data, reg_rem, reg_mask, reg_root, reg_sum) --chg w_sum to reg_sum in fsm
     begin
         -- Default Values:
         state_nx    <= state;
@@ -92,8 +94,8 @@ begin
                 if(reg_mask > X"00000000") then
                     state_nx <= CALC;
                     debug <= 11;
-                    if(w_sum <= UNSIGNED(reg_rem)) then
-                        reg_rem_nx  <= STD_LOGIC_VECTOR(UNSIGNED(reg_rem) - w_sum);
+                    if(reg_sum <= UNSIGNED(reg_rem)) then
+                        reg_rem_nx  <= STD_LOGIC_VECTOR(UNSIGNED(reg_rem) - reg_sum);
                         reg_root_nx <= STD_LOGIC_VECTOR(shift_right((UNSIGNED(reg_root) + shift_left(UNSIGNED(reg_mask),1)),1));
                         debug <= 12;
                     else
