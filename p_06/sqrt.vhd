@@ -7,13 +7,10 @@ entity sqrt is
         -- system
         clk     : IN  STD_LOGIC;
         rst	    : IN  STD_LOGIC;
-
         -- control & status
         pi_start    : IN  STD_LOGIC;
         po_rdy      : OUT STD_LOGIC;
         po_done     : OUT STD_LOGIC;
-        --po_debug    : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		
         -- datapath
         pi_data     : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
         po_data     : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
@@ -27,15 +24,12 @@ type FSM_state is (IDLE, CALC, DONE);
 constant c_ONE      : UNSIGNED(31 DOWNTO 0)         := X"00000001";
 -- wires
 signal w_sum        : UNSIGNED(31 DOWNTO 0)         := (others => '0');
-
 -- regs
 signal state    : FSM_state := IDLE;
 signal state_nx : FSM_state := IDLE;
 
 signal reg_ready    : STD_LOGIC := '0';
---signal reg_ready_nx : STD_LOGIC := '0';
 signal reg_done     : STD_LOGIC := '0';
---signal reg_done_nx  : STD_LOGIC := '0';
 
 signal reg_mask     : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal reg_mask_nx  : STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
@@ -52,7 +46,7 @@ begin
     fsm_process: process(clk)
 	 begin
         if(rising_edge(clk)) then
-            if(rst = '1') then
+            if(rst = '0') then
                 state    <= IDLE;
                 reg_mask <= (others => '0');
                 reg_root <= (others => '0');
@@ -124,6 +118,6 @@ begin
     po_rdy  <= reg_ready;
     po_done <= reg_done;
     --po_data <= STD_LOGIC_VECTOR(to_unsigned(debug, po_data'length)); --reg_root;
-    po_data <= pi_data;
+    po_data <= reg_root;
     
 end behavioral;

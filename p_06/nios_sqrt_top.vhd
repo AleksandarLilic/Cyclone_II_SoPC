@@ -23,30 +23,35 @@ end nios_sqrt_top;
 architecture behavioral of nios_sqrt_top is
     component nios_sqrt is
         port (
-            clk_clk           : in    std_logic                     := 'X';             -- clk
-            reset_reset_n     : in    std_logic                     := 'X';             -- reset_n
-            acc_val_in_export : out   std_logic_vector(31 downto 0);                    -- export
-            sseg_export       : out   std_logic_vector(31 downto 0);                    -- export
-            sram_dq           : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
-            sram_ce_n         : out   std_logic;                                        -- ce_n
-            sram_lb_n         : out   std_logic;                                        -- lb_n
-            sram_ub_n         : out   std_logic;                                        -- ub_n
-            sram_oe_n         : out   std_logic;                                        -- oe_n
-            sram_we_n         : out   std_logic;                                        -- we_n
-            sram_addr         : out   std_logic_vector(17 downto 0);                    -- addr
-            start_export      : out   std_logic;                                        -- export
-            acc_result_export : in    std_logic_vector(31 downto 0) := (others => 'X'); -- export
-            ready_export      : in    std_logic                     := 'X';             -- export
-            done_export       : in    std_logic                     := 'X'              -- export
+            clk_clk           : in    std_logic                    ;  -- clk
+            reset_reset_n     : in    std_logic                    ;  -- reset_n
+            acc_val_in_export : out   std_logic_vector(31 downto 0);  -- export
+            sseg_export       : out   std_logic_vector(31 downto 0);  -- export
+            sram_dq           : inout std_logic_vector(15 downto 0);  -- dq
+            sram_ce_n         : out   std_logic;                      -- ce_n
+            sram_lb_n         : out   std_logic;                      -- lb_n
+            sram_ub_n         : out   std_logic;                      -- ub_n
+            sram_oe_n         : out   std_logic;                      -- oe_n
+            sram_we_n         : out   std_logic;                      -- we_n
+            sram_addr         : out   std_logic_vector(17 downto 0);  -- addr
+            start_export      : out   std_logic;                      -- export
+            acc_result_export : in    std_logic_vector(31 downto 0) ; -- export
+            ready_export      : in    std_logic                     ; -- export
+            done_export       : in    std_logic                       -- export
         );
     end component nios_sqrt;
     
-signal w_sseg4 :        STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
+signal w_sseg4       :  STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal w_acc_val_in  :  STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal w_acc_res_out :  STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal w_start : STD_LOGIC := '0';
 signal w_done  : STD_LOGIC := '0';
 signal w_ready : STD_LOGIC := '0';    
+
+signal debug_led : std_logic_vector(7 downto 0) := (others => '0');
+signal reg_debug_led : std_logic_vector(7 downto 0) := (others => '0');
+
+
 
 begin
     -- cpu instantiation
@@ -78,12 +83,11 @@ begin
             pi_start  => w_start,
             po_rdy    => w_ready, 
             po_done   => w_done,
-           -- po_debug  => w_sseg4,
             -- datapath
             pi_data   => w_acc_val_in,
             po_data   => w_acc_res_out
         );
-        
+
         -- LEDs   
         hex3 <= w_sseg4(30 downto 24);       
         hex2 <= w_sseg4(22 downto 16);       
