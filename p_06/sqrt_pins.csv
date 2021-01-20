@@ -1,5 +1,5 @@
 To,Direction,Location,I/O Standard,Reserved
-rst,Unknown,PIN_V2,,
+rstn,Unknown,PIN_V2,,
 hex0[0],Unknown,PIN_AF10,,
 hex0[1],Unknown,PIN_AB12,,
 hex0[2],Unknown,PIN_AC12,,

@@ -6,7 +6,7 @@ entity nios_sqrt_top is
 	port(	
         -- system
         clk     : IN  STD_LOGIC;
-        rst	    : IN  STD_LOGIC;
+        rstn    : IN  STD_LOGIC;
         -- status
         hex3, hex2, hex1, hex0: OUT STD_LOGIC_VECTOR(6 DOWNTO 0);
         -- sram
@@ -46,19 +46,14 @@ signal w_acc_val_in  :  STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal w_acc_res_out :  STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
 signal w_start : STD_LOGIC := '0';
 signal w_done  : STD_LOGIC := '0';
-signal w_ready : STD_LOGIC := '0';    
-
-signal debug_led : std_logic_vector(7 downto 0) := (others => '0');
-signal reg_debug_led : std_logic_vector(7 downto 0) := (others => '0');
-
-
+signal w_ready : STD_LOGIC := '0';
 
 begin
     -- cpu instantiation
     nios_cpu: component nios_sqrt
         port map (
             clk_clk           => clk,   --  clk.clk
-            reset_reset_n     => rst,   --  reset.reset_n
+            reset_reset_n     => rstn,  --  reset.reset_n
             acc_val_in_export => w_acc_val_in,  --  acc_val_in.export
             sseg_export       => w_sseg4,       --  sseg.export
             sram_dq           => sram_dq,       --  sram.dq
@@ -77,8 +72,8 @@ begin
     sqrt_i: entity work.sqrt
         port map(
             -- system
-            clk => clk,
-            rst	=> rst,
+            clk  => clk,
+            rstn => rstn,
             -- control & status
             pi_start  => w_start,
             po_rdy    => w_ready, 
@@ -88,7 +83,7 @@ begin
             po_data   => w_acc_res_out
         );
 
-        -- LEDs   
+        -- SSEG display   
         hex3 <= w_sseg4(30 downto 24);       
         hex2 <= w_sseg4(22 downto 16);       
         hex1 <= w_sseg4(14 downto 8);       

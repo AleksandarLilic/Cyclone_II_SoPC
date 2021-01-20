@@ -11,7 +11,7 @@ component sqrt
     port(	
         -- system
         clk     : IN  STD_LOGIC;
-        rst	    : IN  STD_LOGIC;
+        rstn    : IN  STD_LOGIC;
 
         -- control & status
         pi_start    : IN  STD_LOGIC;
@@ -24,8 +24,8 @@ component sqrt
 	);
 end component;
 
-signal clk 		: STD_LOGIC 	:= '0';
-signal rst 		: STD_LOGIC 	:= '0';
+signal clk 	    : STD_LOGIC 	:= '0';
+signal rstn     : STD_LOGIC 	:= '0';
 
 -- data input
 signal reg_pi_start    : STD_LOGIC := '0';
@@ -41,7 +41,7 @@ begin
     
     uut: sqrt port map(
     clk     =>  clk,
-    rst	    =>  rst,
+    rstn    =>  rstn,
     -- control & status
     pi_start    =>  reg_pi_start,
     po_rdy      =>  reg_po_rdy,
@@ -63,9 +63,9 @@ begin
 	begin  
 		wait for 10 ns;
 		wait for clk_period;
-		rst <= '1';
+		rstn <= '0';
 		wait for clk_period*2;
-		rst <= '0';
+		rstn <= '1';
 		wait for clk_period*2;
 		reg_pi_start <= '1';
 		reg_pi_data <= X"00000057"; -- dec 87

@@ -6,27 +6,27 @@
 int main()
 {
   alt_u32 val, res, ready, done;
-  alt_u8 di1_msg[4]={sseg_conv_hex(13),0xfb,0xff,sseg_conv_hex(1)};
+  alt_u8 sqrt_msg[4]={0x12,0x18,0x2f,0x07};
 
-  sseg_disp_ptn(SSEG_BASE, di1_msg);               // display "di 1"
+  sseg_disp_ptn(SSEG_BASE, sqrt_msg);               // display "sqrt"
   printf("\n\n SQRT accelerator test: \n");
   while (1){
     printf("Calculate square root of x: y = sqrt(x) \n");
     printf("Enter x: ");
     scanf("%d", &val);
-    /* send data to sqrt accelerator */
+    // send data to sqrt accelerator
     pio_write(ACC_VAL_IN_BASE, val);
-    /* wait until the sqrt accelerator is ready */
+    // wait until the sqrt accelerator is ready
     while (1) {
       ready = pio_read(READY_BASE)& 0x00000001;
       if (ready==1)
         break;
     }
-    /* generate a start pulse */
+    // generate a start pulse
     printf("Start ...\n");
     pio_write(START_BASE, 1);
     pio_write(START_BASE, 0);
-    /* wait for completion  */
+    // wait for completion
     while (1) {
       done = IORD(DONE_TICK_BASE, PIO_EDGE_REG_OFT) & 0x00000001;
       if (done==1)
