@@ -6,7 +6,7 @@ VHDL hardware accelerators design on Cyclone II FPGA with microcontroller applic
 
 Homework assignments as a part of Embedded systems design course  
 
-Projects cover a range of applications for System on Programable Chip. Development board used for the project is Altera DE2 with Cyclone II FPGA and Nios II softcore. Every project is a two-part: hardware description of CPU core with peripherals and accelerators, and C application. Each project has *.sopcinfo* file available and pin assignments *.csv* that are used in a particular project.
+Projects cover a range of applications for System on Programable Chip. Development board used for the project is Altera DE2 with Cyclone II FPGA and Nios II softcore. Every project is a two-part: hardware description of CPU core with peripherals and accelerators, and C application. Each project has *.sopcinfo* file available and pin assignments *.csv* that are used in a particular design.
 
 **Status:**   
 Ongoing, projects are uploaded as they are being developed  
@@ -14,14 +14,15 @@ Ongoing, projects are uploaded as they are being developed
 **Further development:**  
 TBD  
 
-## **Project 6: Hardware accelerator for square root calculation**  
+## **Project 6: Square root hardware accelerator**  
 
 **Description:**  
 
 Hardware accelerator for calculation of y = [sqrt(x)] (nearest whole number that is a square root of x), with x being 32-bit wide and y 16-bit wide (y is padded to 32-bits in order to fit in one Nios II register during system integration). Pseudocode for implemented sqrt function:  
 
-    mask = 1 << 30; root = 0;
-    rem = n;
+    mask = 1 << 30; 
+    root = 0; // result after the completion
+    rem  = data_in; // value of x
     while(mask){
         if((root + mask) <= rem){
             rem = rem - (root + mask);
@@ -31,9 +32,14 @@ Hardware accelerator for calculation of y = [sqrt(x)] (nearest whole number that
         mask = mask >> 2;
     }  
       
-Integration: TBD  
+Interaction between accelerator and Nios II core is achieved via memory mapped registers as follows:  
+ - READY : CPU read | Accelerator status [0 - Busy; 1 - Ready for new calculation]  
+ - START : CPU write | Accelerator start signal [0 - NULL; 1 - Start new calculation (if READY == 1)]  
+ - DONE_TICK : CPU read | Current calculation finished pulse [0 - NULL; 1 - Calculation finished (pulse duration: one clock cycle)]  
+ - ACC_VAL_IN : CPU write | Accelerator input value [32-bit unsigned integer]  
+ - ACC_RESULT : CPU read | Accelerator output value [32-bit unsigned integer]  
 
-Peripherals used: TBD  
+Peripherals used: GPIO for Seven-segment display and JTAG UART for data input and output.  
 
 **Status:**   
 Development  
