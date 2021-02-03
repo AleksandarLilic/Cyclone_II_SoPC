@@ -14,11 +14,33 @@ Ongoing, projects are uploaded as they are being developed
 **Further development:**  
 TBD  
 
+## **Project 7: Altera DE2 onboard RAM integration**  
+
+**Description:**  
+
+System integration of two RAM chips on the Altera DE2 development board.   
+Memory modules:
+ - SRAM: ISSI IS61LV25616AL, 256Kx16, as Avalon MM Slave/SoPC component
+ - SDRAM: ICSI IS42S16400, 4Mx16, as IP Core/Qsys SDRAM controller
+ 
+Altera PLL is utilized in order to synchronize off-chip SDRAM timings with the main system. This is achieved with a phase shift of -3ns/-54deg for SDRAM module.
+
+Software is used as a testing platform to confirm memories read and write. Errors are injected on purpose at the. Test function checks both SRAM and SDRAM modules.
+ 
+Peripherals used: GPIO for communication with the off-chip memory modules
+
+**Branch:**  
+p_07_dev  
+
+**Status:**   
+Development  
+
+
 ## **Project 6: Square root hardware accelerator**  
 
 **Description:**  
 
-Hardware accelerator for calculation of y = [sqrt(x)] (nearest whole number that is a square root of x), with x being 32-bit wide and y 16-bit wide (y is padded to 32-bits in order to fit in one Nios II register during system integration). Pseudocode for implemented sqrt function:  
+Hardware accelerator for the calculation of y = [sqrt(x)] (nearest whole number that is a square root of x), with x being 32-bit wide and y 16-bit wide (y is padded to 32-bits in order to fit in one Nios II register during system integration). Pseudocode for implemented sqrt function:  
 
     mask = 1 << 30; 
     root = 0; // result after the completion
@@ -34,7 +56,7 @@ Hardware accelerator for calculation of y = [sqrt(x)] (nearest whole number that
 
 ASMD for the accelerator architecture: [Diagram](https://github.com/AleksandarLilic/Cyclone_II_SoPC/blob/main/p_06_doc/p_06_asmd.pdf)  
 
-Interaction between accelerator and Nios II core is achieved via memory mapped registers as follows:  
+Interaction between accelerator and Nios II core is achieved via GPIO memory mapped registers as follows:  
  - READY : Accelerator status [CPU read]
    - 0 - Busy  
    - 1 - Ready for new calculation  
