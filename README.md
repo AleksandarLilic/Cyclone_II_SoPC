@@ -18,14 +18,14 @@ TBD
 
 **Description:**  
 
-System integration of two RAM chips on the Altera DE2 development board.   
-Memory modules:
- - SRAM: ISSI IS61LV25616AL, 256Kx16, as Avalon MM Slave/SoPC component
- - SDRAM: ICSI IS42S16400, 4Mx16, as IP Core/Qsys SDRAM controller
+System integration of two RAM chips on the Altera DE2 development board.     
+Memory modules:  
+ - SRAM: ISSI IS61LV25616AL, 256Kx16, as Avalon MM Slave/SoPC component  
+ - SDRAM: ICSI IS42S16400, 4Mx16, as IP Core/Qsys SDRAM controller  
  
-Altera PLL is utilized in order to synchronize off-chip SDRAM timings with the main system. This is achieved with a phase shift of -3ns/-54deg for SDRAM module.
+Altera PLL is utilized in order to synchronize off-chip SDRAM timings with the main system. This is achieved with a phase shift of -3ns/-54deg for SDRAM module.  
 
-Software is used as a testing platform to confirm memories read and write. Errors are injected on purpose at the. Test function checks both SRAM and SDRAM modules.
+Software is used as a testing platform to confirm memories read and write. Errors are injected on purpose in the last four memory locations. Software test function checks both SRAM and SDRAM modules.  
  
 Peripherals used: GPIO for communication with the off-chip memory modules
 
