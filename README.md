@@ -33,7 +33,7 @@ Peripherals used: GPIO for communication with the off-chip memory modules
 p_07_dev  
 
 **Status:**   
-Development  
+Finished  
 
 
 ## **Project 6: Square root hardware accelerator**  
