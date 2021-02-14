@@ -6,13 +6,45 @@ VHDL hardware accelerators design on Cyclone II FPGA with microcontroller applic
 
 Homework assignments as a part of Embedded systems design course  
 
-Projects cover a range of applications for System on Programable Chip. The development board used for the project is Altera DE2 with Cyclone II FPGA and Nios II softcore. Every project is a two-part design: hardware description of CPU core with peripherals and accelerators, and C application. Each project has *.sopcinfo* file available and pin assignments *.csv* that are used in a particular design.
+Projects cover a range of applications for System on Programmable Chip. The development board used for the project is Altera DE2 with Cyclone II FPGA and Nios II softcore. Every project is a two-part design: hardware description of CPU core with peripherals and accelerators, and C application. Each project has *.sopcinfo* file available and pin assignments *.csv* that are used in a particular design.
 
 **Status:**   
 Ongoing, projects are uploaded as they are being developed  
 
 **Further development:**  
 TBD  
+
+## **Project 8: Convolutional Encoder**  
+
+**Description:**  
+
+Hardware design of a 32-bit convolutional encoder. Interaction between is achieved through one 32-bit shift register with parallel write from CPU and serial read and write from the accelerator. Simple 6-bit counter is used as a control parameter together with FSM. Accelerator is implemented as a IP Core/Qsys component in the Nios II system.  
+
+Software is used as a testing platform to confirm values produced by the hardware accelerator - same encoding scheme is implemented as a C function. Additionally, both hardware and software solutions have execution timers which are used to measure performance difference between the two implementations.
+
+Interaction between accelerator and Nios II core is achieved via memory mapped registers as follows:  
+ - DATA : Memory mapped register
+   - 32-bit unsigned integer  
+   - Depending on the context, used as data to be encoded or encoded value  
+ - WE/START : Accelerator write enable and start signal [CPU write] 
+   - 0 - NULL  
+   - 1 - Load value and start new calculation (valid only if READY == 1)  
+ - RESET : Accelerator reset signal [CPU write] 
+   - 0 - NULL  
+   - 1 - Reset accelerator data path  
+ - READY : Accelerator status [CPU read]  
+   - 0 - Busy  
+   - 1 - Ready  
+
+//TBD results  
+ 
+Peripherals used: Timer peripheral for software run-time recording.
+
+**Branch:**  
+p_08_dev  
+
+**Status:**   
+Ongoing 
 
 ## **Project 7: Altera DE2 onboard RAM integration**  
 
