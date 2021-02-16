@@ -58,7 +58,7 @@ begin
     fsm_process: process(clk)
 	begin 
 		if(rising_edge(clk)) then
-			if(rstn = '1' or pi_fw_rstn = '1') then
+			if(rstn = '0' or pi_fw_rstn = '0') then
 				state <= IDLE;
 			else
 				state <= state_nx;
@@ -67,7 +67,7 @@ begin
 	end process;
     
     -- states
-    fsm_state_process: process(state, state_nx, pi_start, reg_cnt)
+    fsm_state_process: process(state, pi_start, reg_cnt)
     begin
         -- default values:
         state_nx     <= state;
@@ -91,8 +91,7 @@ begin
             
             when CALC =>
                 debug      <= 11;
-                reg_cnt_en <= '1';
-                if(reg_cnt < X"1F") then
+                if(reg_cnt < "11111") then
                     state_nx     <= CALC;
                     reg_acc_en   <= '1';
                     reg_cnt_en   <= '1';
@@ -170,7 +169,7 @@ begin
             elsif(pi_we = '1') then
                 reg_enc_data <= pi_data;
             elsif(reg_acc_en = '1') then
-                reg_enc_data <= w_bit_out & reg_enc_data(30 DOWNTO 0);
+                reg_enc_data <= w_bit_out & reg_enc_data(31 DOWNTO 1);
             else
                 reg_enc_data <= reg_enc_data;
             end if;
