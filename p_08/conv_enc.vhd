@@ -25,7 +25,7 @@ type FSM_state is (IDLE, CALC, DONE);
 -- constants
 -- constant c_ONE      : UNSIGNED(31 DOWNTO 0)         := X"00000001";
 -- wires
-signal w_cnt_next   : STD_LOGIC_VECTOR( 4 DOWNTO 0) := "00000";
+signal w_cnt_next   : STD_LOGIC_VECTOR( 5 DOWNTO 0) := "000000";
 signal w_d0_in      : STD_LOGIC := '0';
 --signal w_d0_out     : STD_LOGIC := '0';
 --signal w_d1_out     : STD_LOGIC := '0';
@@ -42,7 +42,7 @@ signal reg_cnt_en   : STD_LOGIC := '0';
 signal reg_cnt_rstn : STD_LOGIC := '0';
 signal reg_done     : STD_LOGIC := '0';
 
-signal reg_cnt      : STD_LOGIC_VECTOR( 4 DOWNTO 0) := "00000";
+signal reg_cnt      : STD_LOGIC_VECTOR( 5 DOWNTO 0) := "000000";
 
 signal reg_enc_data : STD_LOGIC_VECTOR(31 DOWNTO 0) := X"00000000";
 
@@ -91,7 +91,7 @@ begin
             
             when CALC =>
                 debug      <= 11;
-                if(reg_cnt < "11111") then
+                if(reg_cnt < "100000") then
                     state_nx     <= CALC;
                     reg_acc_en   <= '1';
                     reg_cnt_en   <= '1';
@@ -120,7 +120,7 @@ begin
 	begin
         if(rising_edge(clk)) then
             if(rstn = '0' or pi_fw_rstn = '0' or reg_cnt_rstn = '0') then
-                reg_cnt <= "00000";
+                reg_cnt <= "000000";
             else
                 reg_cnt <= w_cnt_next;
             end if;

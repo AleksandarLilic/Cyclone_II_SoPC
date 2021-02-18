@@ -76,7 +76,7 @@ begin
         
         reg_pi_we <= '1';
 		reg_pi_start <= '1';
-		reg_pi_data <= X"F00003AA"; -- dec 87
+		reg_pi_data <= X"00000041";
 		wait for clk_period;
         reg_pi_we <= '0';
 		reg_pi_start <= '0';
