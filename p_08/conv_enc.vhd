@@ -91,7 +91,7 @@ begin
             
             when CALC =>
                 debug      <= 11;
-                if(reg_cnt < "100000") then
+                if(reg_cnt < "100001") then
                     state_nx     <= CALC;
                     reg_acc_en   <= '1';
                     reg_cnt_en   <= '1';
