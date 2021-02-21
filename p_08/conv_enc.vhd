@@ -27,8 +27,6 @@ type FSM_state is (IDLE, CALC, DONE);
 -- wires
 signal w_cnt_next   : STD_LOGIC_VECTOR( 5 DOWNTO 0) := "000000";
 signal w_d0_in      : STD_LOGIC := '0';
---signal w_d0_out     : STD_LOGIC := '0';
---signal w_d1_out     : STD_LOGIC := '0';
 signal w_bit_in_fb  : STD_LOGIC := '0';
 signal w_bit_d1_d2  : STD_LOGIC := '0';
 signal w_bit_in     : STD_LOGIC := '0';
@@ -139,7 +137,7 @@ begin
                 reg_d0_out <= '0';
                 reg_d1_out <= '0';
                 reg_d2_out <= '0';
-            elsif(reg_acc_en <= '1') then
+            elsif(reg_acc_en = '1') then
                 reg_d0_out <= w_d0_in;
                 reg_d1_out <= reg_d0_out;
                 reg_d2_out <= reg_d1_out;
@@ -150,11 +148,8 @@ begin
             end if;
         end if;
 	end process;
-    
-    -- w_d0_out = reg_d0_out;
-    -- w_d1_out = reg_d1_out;
-    -- w_d2_out = reg_d2_out;
      
+    w_bit_in    <= reg_enc_data(0);
     w_d0_in     <= w_bit_in    xor w_bit_in_fb;
     w_bit_in_fb <= reg_d1_out  xor reg_d2_out;
     w_bit_d1_d2 <= w_d0_in     xor reg_d0_out;
@@ -176,11 +171,8 @@ begin
         end if;
 	end process;
     
-    w_bit_in <= reg_enc_data(0);
-    -- w_enc_data = reg_enc_data;   
     po_data <= reg_enc_data;
     po_rdy  <= reg_rdy;
     po_done <= reg_done;
-
 
 end behavioral;
