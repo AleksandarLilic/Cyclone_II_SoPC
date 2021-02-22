@@ -161,7 +161,7 @@ begin
         if(rising_edge(clk)) then
             if(rstn = '0' or pi_fw_rstn = '0' ) then
                 reg_enc_data <= X"00000000";
-            elsif(pi_we = '1') then
+            elsif(pi_we = '1' and reg_rdy = '1') then
                 reg_enc_data <= pi_data;
             elsif(reg_acc_en = '1') then
                 reg_enc_data <= w_bit_out & reg_enc_data(31 DOWNTO 1);

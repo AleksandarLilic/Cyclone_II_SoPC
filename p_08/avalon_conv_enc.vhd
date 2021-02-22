@@ -70,7 +70,7 @@ begin
     -- Register offset:
         -- 00: DATA
         -- 01: WE/START
-        -- 02: FW RESET
+        -- 10: FW RESET
         
     -- Write
     wr_en     <= '1' when conv_enc_write = '1' and conv_enc_chipselect = '1' else
@@ -119,7 +119,7 @@ begin
                 if (w_done = '1') then
                     state_nx   <= IDLE;
                 else
-                    reg_cnt_nx <= X"0001";
+                    reg_cnt_nx <= reg_cnt + 1;
                 end if;
                 
             when others =>

@@ -72,7 +72,7 @@ begin
         
         -- Load data
         w_conv_enc_address <= "00";
-		w_conv_enc_writedata <= X"00000041";
+		w_conv_enc_writedata <= X"000000FF";
 		wait for clk_period;
         
         -- Start calc
@@ -81,8 +81,20 @@ begin
 		wait for clk_period;
         w_conv_enc_write <= '0';
         
-		wait for clk_period;
-        wait for clk_period*20;
+		-- CALC + 1
+        wait for clk_period;
+        wait for clk_period*34;
+        
+        -- Load data
+        w_conv_enc_write <= '1';
+        w_conv_enc_address <= "00";
+        -- w_conv_enc_writedata <= X"000000FF";
+        wait for clk_period;
+        
+        -- Start calc
+        w_conv_enc_address <= "01";
+        wait for clk_period;
+        -- w_conv_enc_write <= '0';
         wait;
         
     end process;
