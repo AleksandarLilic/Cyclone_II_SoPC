@@ -83,6 +83,12 @@ begin
         
 		-- CALC + 1
         wait for clk_period;
+        w_conv_enc_address <= "00";
+        wait for clk_period*34;
+        wait for clk_period;
+        w_conv_enc_address <= "01";
+        wait for clk_period;
+        w_conv_enc_address <= "00";
         wait for clk_period*34;
         
         -- Load data

@@ -85,7 +85,7 @@ begin
                  '1';
     -- Read
     conv_enc_readdata <= w_dout when conv_enc_address = "00" else
-                         w_done & "000" & x"000" & STD_LOGIC_VECTOR(reg_cnt);
+                         w_rdy & "000" & x"000" & STD_LOGIC_VECTOR(reg_cnt);
 
 -- HW counter to keep track of execution cycles
     -- FSM process
