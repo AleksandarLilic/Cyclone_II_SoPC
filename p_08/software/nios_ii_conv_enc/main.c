@@ -1,6 +1,7 @@
 // file inclusion
 // General C library
 #include <stdio.h>
+#include <stdlib.h>   // for rand()
 // Altera-specific library
 #include <io.h>
 #include <alt_types.h>
@@ -173,7 +174,7 @@ int main(void){
     int s = 0, c = 0;
     int samples = 10000;
     int i;
-    data = 0x00000041;
+    data = 0x00000041; // initial data
     printf("Convolutional encoder test: \n");
     
     /* // single round:
@@ -188,15 +189,20 @@ int main(void){
     // printf("Clocks HW: %d;  ", clks); */
     
     // samples # of rounds:
+    // set the random number seed:
+    srand(100);
+    
     for (i = 0; i < samples; i++){
         val_sw = calc_conv_enc_sw(data, &ticks);
         val_hw = calc_conv_enc_hw(CONV_ENC_BASE, data, &clks);
-        
         // sanity check
         if(val_sw != val_hw)
             printf("Error: data value: %d, SW result: %d, HW result: %d ; Round #: %d \n", (int)data, (int)val_sw, (int)val_hw, i);
+        // store execution cycle values
         s = s + ticks;
         c = c + clks;
+        // generate new random data
+        data = rand();
     }
     
     printf("Average clocks SW/HW: %d/%d;  ", s/samples, c/samples);
