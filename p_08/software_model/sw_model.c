@@ -2,10 +2,16 @@
 
 void main(){
     char state = '0';
-    unsigned int cnt = 32;
-    unsigned int reg = 0x00000041;
+    unsigned int cnt ;
+    unsigned int reg_b = 0x00000041;
+    unsigned int i = 3;
     unsigned int dout;
     unsigned int din;
+    
+    while(i>0){
+    i--;
+    cnt = 32;
+    unsigned int reg = reg_b;
     
     while(cnt>0){
         din = reg & 0x00000001; // mask out last bit
@@ -122,4 +128,5 @@ void main(){
         cnt--;
     }
     printf("Value of reg final: 0x%08X \n\n", reg);
+}
 }
