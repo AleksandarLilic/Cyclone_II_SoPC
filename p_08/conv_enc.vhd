@@ -22,8 +22,6 @@ end conv_enc;
 architecture behavioral of conv_enc is
 -- Custom Types
 type FSM_state is (IDLE, CALC, DONE);
--- constants
--- constant c_ONE      : UNSIGNED(31 DOWNTO 0)         := X"00000001";
 -- wires
 signal w_cnt_next   : STD_LOGIC_VECTOR( 5 DOWNTO 0) := "000000";
 signal w_d0_in      : STD_LOGIC := '0';
@@ -48,7 +46,7 @@ signal reg_d0_out   : STD_LOGIC := '0';
 signal reg_d1_out   : STD_LOGIC := '0';
 signal reg_d2_out   : STD_LOGIC := '0';
 
-signal debug        : INTEGER := 0;
+--signal debug        : INTEGER := 0;
 
 begin
 -- FSM
@@ -64,7 +62,7 @@ begin
 		end if;
 	end process;
     
-    -- states
+    -- state
     fsm_state_process: process(state, pi_start, reg_cnt)
     begin
         -- default values:
@@ -74,42 +72,42 @@ begin
         reg_cnt_en   <= '0';
         reg_cnt_rstn <= '1';
         reg_done     <= '0';        
-        debug        <= 99;
+        -- debug        <= 99;
         
         case(state) is
             when IDLE =>
-                debug    <= 1;
+                -- debug    <= 1;
                 reg_rdy  <= '1';
                 if(pi_start = '1') then
                     state_nx     <= CALC;
-                    reg_acc_en   <= '1';
-                    reg_cnt_en   <= '1';
-                    debug <= 2;
+                    -- reg_acc_en   <= '1';
+                    -- reg_cnt_en   <= '1';
+                    -- debug <= 2;
                 end if;
             
             when CALC =>
-                debug      <= 11;
-                if(reg_cnt < "100001") then
+                -- debug      <= 11;
+                if(reg_cnt < "100000") then
                     state_nx     <= CALC;
                     reg_acc_en   <= '1';
                     reg_cnt_en   <= '1';
-                    debug <= 12;
+                    -- debug <= 12;
                 else
                     state_nx     <= DONE;
                     reg_cnt_rstn <= '0';
                     reg_acc_en   <= '0';
                     reg_cnt_en   <= '0';
-                    debug <= 13;
+                    -- debug <= 13;
                 end if;
             
             when DONE =>
                 state_nx <= IDLE;
                 reg_done <= '1';
-                debug <= 21;
+                -- debug <= 21;
             
             when others =>
                 NULL;
-                debug <= 999;
+                -- debug <= 999;
         end case;
     end process;
     

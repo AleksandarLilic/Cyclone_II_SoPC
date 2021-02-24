@@ -72,7 +72,7 @@ begin
         
         -- Load data
         w_conv_enc_address <= "00";
-		w_conv_enc_writedata <= X"000000FF";
+		w_conv_enc_writedata <= X"00000041";
 		wait for clk_period;
         
         -- Start calc
