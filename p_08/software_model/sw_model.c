@@ -50,7 +50,7 @@ void main(){
                     dout  = 1;
                 }
                 else{ //din == 1
-                    state = '5';
+                    state = '1';
                     dout  = 0;
                 }
                 break;
@@ -128,5 +128,9 @@ void main(){
         cnt--;
     }
     printf("Value of reg final: 0x%08X \n\n", reg);
+    if (i==2) 
+        reg_b = 0xF000000F;
+    else
+        reg_b = 0xA5A5F1F1;
 }
 }

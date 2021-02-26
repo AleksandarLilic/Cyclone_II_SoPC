@@ -86,21 +86,48 @@ begin
         w_conv_enc_address <= "00";
         wait for clk_period*34;
         wait for clk_period;
-        w_conv_enc_address <= "01";
-        wait for clk_period;
-        w_conv_enc_address <= "00";
-        wait for clk_period*34;
+        
+        -- Hold
+        -- w_conv_enc_address <= "01";
+        -- wait for clk_period;
+        -- w_conv_enc_address <= "00";
+        -- wait for clk_period*34;
         
         -- Load data
         w_conv_enc_write <= '1';
         w_conv_enc_address <= "00";
-        -- w_conv_enc_writedata <= X"000000FF";
+        w_conv_enc_writedata <= X"F000000F";
         wait for clk_period;
         
         -- Start calc
         w_conv_enc_address <= "01";
         wait for clk_period;
-        -- w_conv_enc_write <= '0';
+        w_conv_enc_write <= '0';
+        
+        -- CALC + 1
+        wait for clk_period;
+        w_conv_enc_address <= "00";
+        wait for clk_period*34;
+        wait for clk_period;
+        
+        -- Load data
+        w_conv_enc_write <= '1';
+        w_conv_enc_address <= "00";
+        w_conv_enc_writedata <= X"A5A5F1F1";
+        wait for clk_period;
+        
+        -- Start calc
+        w_conv_enc_address <= "01";
+        wait for clk_period;
+        w_conv_enc_write <= '0';
+        
+        -- CALC + 1
+        wait for clk_period;
+        w_conv_enc_address <= "00";
+        wait for clk_period*34;
+        wait for clk_period;
+        
+        
         wait;
         
     end process;
