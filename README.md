@@ -18,27 +18,39 @@ TBD
 
 **Description:**  
 
-Hardware design of a 32-bit convolutional encoder. Interaction between is achieved through one 32-bit shift register with parallel write from CPU and serial read and write from the accelerator. Simple 6-bit counter is used as a control parameter together with FSM. Accelerator is implemented as a IP Core/Qsys component in the Nios II system.  
+Hardware design of a 32-bit convolutional encoder. Interaction between is achieved through one 32-bit shift register with parallel write from CPU and serial read and write from the accelerator. Simple 6-bit counter is used as a control parameter together with FSM. Accelerator is implemented as an IP Core/Qsys component in the Nios II system.  
 
 Software is used as a testing platform to confirm values produced by the hardware accelerator - same encoding scheme is implemented as a C function. Additionally, both hardware and software solutions have execution timers which are used to measure performance difference between the two implementations.
 
 Interaction between accelerator and Nios II core is achieved via memory mapped registers as follows:  
- - DATA : Memory mapped register
-   - 32-bit unsigned integer  
-   - Depending on the context, used as data to be encoded or encoded value  
- - WE/START : Accelerator write enable and start signal [CPU write] 
+ - 00: DATA - Memory mapped register
+   - 32-bit unsigned integer, current data value in the accelerator  
+   - if (READY == 1), data in the register is the last calculated value  
+ - 01: WE/START - Accelerator write enable and start signal [CPU write] 
    - 0 - NULL  
-   - 1 - Load value and start new calculation (valid only if READY == 1)  
- - RESET : Accelerator reset signal [CPU write] 
+   - 1 - Load value and start new calculation, valid only if (READY == 1)  
+ - 10: FW RESET - Accelerator reset signal [CPU write] 
    - 0 - NULL  
    - 1 - Reset accelerator data path  
- - READY : Accelerator status [CPU read]  
-   - 0 - Busy  
-   - 1 - Ready  
-
-//TBD results  
+ - 11: STATUS - Accelerator status and clock count [CPU read]  
+   - 32-bit unsigned integer
+   - STATUS[31] stores the current status of the accelerator:  
+     - 0 - Busy  
+     - 1 - Ready
+   - STATUS[30:16] always evaluate to zero
+   - STATUS[15:0] represent the number of clock cycles it took for accelerator to produce the final value on the output
  
-Peripherals used: Timer peripheral for software run-time recording.
+\* Note: Two 1-bit registers do not hold an actual value but are used just to trigger a specific command or get status   
+
+**Performance metrics:**  
+Average number of clock cycles needed for encoding 10 000 samples of data, with both Nios 2 CPU and the accelerator driven from the same 50MHz PLL:
+ - SW: 15 334 ticks
+ - HW: 34 clock cycles
+ - Speedup: SW/HW = x451
+ 
+**Peripherals used:**  
+*Timer*: software run-time recording  
+*JTAG UART*: data output
 
 **Branch:**  
 p_08_dev  
@@ -59,7 +71,8 @@ Altera PLL is utilized in order to synchronize off-chip SDRAM timings with the m
 
 Software is used as a testing platform to confirm memories read and write. Errors are injected on purpose in the last four memory locations. Software test function checks both SRAM and SDRAM modules.  
  
-Peripherals used: GPIO for communication with the off-chip memory modules
+**Peripherals used:**  
+*GPIO*: communication with the off-chip memory modules
 
 **Branch:**  
 p_07_dev  
@@ -103,7 +116,9 @@ Interaction between accelerator and Nios II core is achieved via GPIO memory map
  - ACC_RESULT : Accelerator output value [CPU read]  
    - 32-bit unsigned integer  
 
-Peripherals used: GPIO for Seven-segment display and JTAG UART for data input and output.  
+**Peripherals used:**  
+*GPIO*: Seven-segment display  
+*JTAG UART*: data input and output  
 
 **Branch:**  
 p_06_dev  
@@ -119,7 +134,10 @@ Improved Alarm clock SW application with the use of HAL for timer and UART perip
  - Improved portability due to HAL and 
  - Added determinism thru interrupts.  
  
-Peripherals used: GPIO for Seven-segment display, pushbuttons, switches and LED, Timer and JTAG UART.  
+**Peripherals used:**  
+*GPIO*: Seven-segment display, pushbuttons, switches and LED  
+*Timer*:  Two timers, system and user     
+*JTAG UART*: data output  
 
 **Branch:**  
 p_04_dev  
@@ -131,7 +149,12 @@ Finished
 
 **Description:**  
 
-Alarm clock SW application. Peripherals used: GPIO for Seven-segment display, pushbuttons, switches and LED, Timer and JTAG UART. 
+Alarm clock SW application. Allows for setting time and alarm through switches/buttons, uses JTAG UART to displays current values/status and changes made thru settings and LED to signal the alarm activation.
+
+**Peripherals used:**  
+*GPIO*: Seven-segment display, pushbuttons, switches and LED  
+*Timer*:  Two timers, system and user     
+*JTAG UART*: data output  
 
 **Status:**   
 Finished  
@@ -154,8 +177,10 @@ Software implementation of the logic unit thru function:
     ***********************************************************************/
     alt_u8 sw_lu(alt_u8 a, alt_u8 b, alt_u8 op);  
         
-Peripherals used: GPIO for switches, button and LEDs.  
 Operands and opcode are set through 18 slide switches with padding on the two most significant bits of the *b* operand. The result is displayed on 8 red LEDs. Switch for a microcontroller reset. The external crystal used is 50MHz.  
+
+**Peripherals used:**  
+*GPIO*: switches, button and LEDs    
 
 **Status:**   
 Finished
@@ -165,8 +190,10 @@ Finished
 **Description:**  
 
 Introductory HW project to get familiar with the IDE and implementation process.  
-Peripherals used: GPIO for switches, button, and LEDs.  
 Two LEDs are flashing with the period assigned thru 10 slide switches. Play/Pause button for enabling and disabling counter. The external crystal used is 50MHz.  
+
+**Peripherals used:**  
+*GPIO*: switches, button and LEDs
 
 **Status:**   
 Finished
